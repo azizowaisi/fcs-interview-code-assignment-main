@@ -24,7 +24,14 @@ jobs:
           cd java-assignment
           ./mvnw -B verify
 
-      - name: Upload JaCoCo report (optional)
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: java-assignment/target/surefire-reports/**/*.xml
+          check_name: Test results
+
+      - name: Upload JaCoCo report
         uses: actions/upload-artifact@v4
         if: always()
         with:

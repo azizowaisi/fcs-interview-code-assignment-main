@@ -121,7 +121,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- JaCoCo: report all; enforce 80% line coverage on assignment code (location + warehouse use cases) -->
+            <!-- JaCoCo: 80% line coverage on assignment code (location + warehouse use cases only) -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
