@@ -16,7 +16,8 @@ public interface WarehouseStore {
   /** Returns active (non-archived) warehouse with the given business unit code, or null. */
   Warehouse findByBusinessUnitCode(String buCode);
 
-  Warehouse findById(Long id);
+  /** Finds a warehouse by database id (any status). Returns null if not found. */
+  Warehouse getById(Long id);
 
   /** Count of active warehouses at the given location identifier. */
   long countActiveByLocation(String locationIdentifier);

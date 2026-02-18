@@ -80,6 +80,25 @@ Navigate to:
 
 <http://localhost:8080/index.html>
 
+## Health check
+
+The application exposes a health endpoint (SmallRye Health):
+
+- **Liveness/readiness:** <http://localhost:8080/q/health>
+- **JSON:** <http://localhost:8080/q/health?format=json>
+
+Use these for Kubernetes probes or load balancer health checks.
+
+## Testing and coverage
+
+- **Unit tests:** `./mvnw test` — runs JUnit 5 tests and JaCoCo. Minimum 80% line coverage is enforced (see [TESTING.md](TESTING.md)).
+- **Coverage report:** `target/site/jacoco/index.html` after `./mvnw test`.
+- **Integration tests:** `./mvnw verify` — runs Quarkus integration tests.
+
+## CI/CD
+
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on push/PR to `main` or `master`: build and `./mvnw verify` in the `java-assignment` directory. The JaCoCo report is uploaded as an artifact.
+
 Have fun, and join the team of contributors!
 
 ## Troubleshooting

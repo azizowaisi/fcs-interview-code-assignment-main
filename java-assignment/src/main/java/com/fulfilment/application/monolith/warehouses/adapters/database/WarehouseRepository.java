@@ -85,7 +85,7 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   }
 
   @Override
-  public Warehouse findById(Long id) {
+  public Warehouse getById(Long id) {
     if (id == null) {
       return null;
     }

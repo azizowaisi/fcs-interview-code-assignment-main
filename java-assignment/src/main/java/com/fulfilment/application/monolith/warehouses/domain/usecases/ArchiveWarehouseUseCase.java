@@ -30,7 +30,7 @@ public class ArchiveWarehouseUseCase implements ArchiveWarehouseOperation {
 
     Warehouse toArchive =
         warehouse.id != null
-            ? warehouseStore.findById(warehouse.id)
+            ? warehouseStore.getById(warehouse.id)
             : warehouseStore.findByBusinessUnitCode(warehouse.businessUnitCode);
     if (toArchive == null) {
       String identifier =

@@ -12,8 +12,7 @@ Yes, I would consider refactoring for consistency and maintainability. The codeb
 - **Warehouse**: Repository + domain ports (WarehouseStore, use cases) with a clear separation between domain models, adapters (WarehouseRepository, DbWarehouse), and REST.
 
 I would refactor toward the Warehouse-style approach for Store and Product as well: introduce a repository (or port) layer and use cases so that business rules and persistence are not tied to the REST layer. Benefits: easier testing (mock the store), consistent patterns across the app, and a single place for transaction boundaries and validation. The refactor could be incremental (e.g. add StoreRepository that delegates to Panache under the hood) to limit risk.
-```
-----
+
 2. When it comes to API spec and endpoints handlers, we have an Open API yaml file for the `Warehouse` API from which we generate code, but for the other endpoints - `Product` and `Store` - we just coded directly everything. What would be your thoughts about what are the pros and cons of each approach and what would be your choice?
 
 **Answer:**
@@ -22,8 +21,7 @@ I would refactor toward the Warehouse-style approach for Store and Product as we
 **Code-first (Store/Product):** Pros: fast to iterate; no codegen; full control over types and signatures. Cons: contract is implicit (only in code); docs and clients can drift; harder to enforce consistency across services.
 
 **Choice:** I would standardize on OpenAPI-first for any API that is (or might be) consumed by other teams or systems, and use code-first only for very small or internal-only endpoints. For this codebase I would add OpenAPI specs for Store and Product and generate resource interfaces (and optionally DTOs) so all three domains follow the same approach and the contract is the single source of truth.
-```
-----
+
 3. Given the need to balance thorough testing with time and resource constraints, how would you prioritize and implement tests for this project? Which types of tests would you focus on, and how would you ensure test coverage remains effective over time?
 
 **Answer:**

@@ -14,9 +14,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
+import org.jboss.logging.Logger;
 
 @RequestScoped
 public class WarehouseResourceImpl implements WarehouseResource {
+
+  private static final Logger LOG = Logger.getLogger(WarehouseResourceImpl.class);
 
   @Inject private WarehouseRepository warehouseRepository;
   @Inject private CreateWarehouseOperation createWarehouseOperation;
@@ -39,6 +42,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
     try {
       createWarehouseOperation.create(domain);
     } catch (WarehouseValidationException e) {
+      LOG.warnf("Warehouse create validation failed: %s", e.getMessage());
       throw new WebApplicationException(
           Response.status(400).entity(messageOrDefault(e, "Validation failed")).build());
     }
@@ -52,8 +56,9 @@ public class WarehouseResourceImpl implements WarehouseResource {
           Response.status(400).entity("Warehouse id is required").build());
     }
     Long idLong = parseId(id);
-    Warehouse domain = warehouseRepository.findById(idLong);
+    Warehouse domain = warehouseRepository.getById(idLong);
     if (domain == null) {
+      LOG.debugf("Warehouse not found for id: %s", id);
       throw new WebApplicationException(
           Response.status(404).entity("Warehouse not found: " + id).build());
     }
@@ -72,9 +77,11 @@ public class WarehouseResourceImpl implements WarehouseResource {
     try {
       archiveWarehouseOperation.archive(domain);
     } catch (WarehouseNotFoundException e) {
+      LOG.warnf("Archive failed: %s", e.getMessage());
       throw new WebApplicationException(
           Response.status(404).entity(messageOrDefault(e, "Warehouse not found")).build());
     } catch (WarehouseValidationException e) {
+      LOG.warnf("Archive validation failed: %s", e.getMessage());
       throw new WebApplicationException(
           Response.status(400).entity(messageOrDefault(e, "Validation failed")).build());
     }
@@ -96,14 +103,17 @@ public class WarehouseResourceImpl implements WarehouseResource {
     try {
       replaceWarehouseOperation.replace(domain);
     } catch (WarehouseNotFoundException e) {
+      LOG.warnf("Replace failed (not found): %s", e.getMessage());
       throw new WebApplicationException(
           Response.status(404).entity(messageOrDefault(e, "Warehouse not found")).build());
     } catch (WarehouseValidationException e) {
+      LOG.warnf("Replace validation failed: %s", e.getMessage());
       throw new WebApplicationException(
           Response.status(400).entity(messageOrDefault(e, "Validation failed")).build());
     }
     Warehouse created = warehouseRepository.findByBusinessUnitCode(businessUnitCode);
     if (created == null) {
+      LOG.errorf("Warehouse created but not found by code: %s", businessUnitCode);
       throw new WebApplicationException(
           Response.status(500)
               .entity("Warehouse was created but could not be retrieved")
