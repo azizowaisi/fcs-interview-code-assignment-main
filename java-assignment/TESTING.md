@@ -2,19 +2,18 @@
 
 ## Overview
 
-Tests are written with **JUnit 5** and **Mockito**. Coverage is enforced with **JaCoCo** (minimum 80% line coverage on selected packages). Excluded from coverage: generated API code (`com.warehouse.api`), DTOs/beans, and domain model classes (getters/setters only).
+Tests use **JUnit 5**, **Mockito**, and **QuarkusTest** (REST with H2). **JaCoCo** enforces 80% line coverage on the assignment packages (location + warehouse use cases). The full report includes all code; the check applies only to those packages.
 
 ## Running Tests
 
 ```bash
-# Unit tests only (includes JaCoCo report and check)
+cd java-assignment
+
+# All tests (unit + QuarkusTest) and JaCoCo check
+./mvnw -B verify
+
+# Tests only (report at target/site/jacoco/index.html)
 ./mvnw test
-
-# View coverage report after test
-open target/site/jacoco/index.html   # or open the file in browser
-
-# Integration tests (full application)
-./mvnw verify
 ```
 
 ## Test Structure
@@ -23,26 +22,31 @@ open target/site/jacoco/index.html   # or open the file in browser
 
 | Component | Positive | Negative / Error |
 |-----------|----------|-------------------|
-| **LocationGatewayTest** | Resolve existing identifier (e.g. ZWOLLE-001, AMSTERDAM-001) | Unknown identifier, null, blank |
+| **LocationGatewayTest** | Resolve existing identifier (ZWOLLE-001, AMSTERDAM-001) | Unknown identifier, null, blank |
 | **CreateWarehouseUseCaseTest** | Create when all validations pass | Null warehouse; blank bu code/location; null/negative capacity/stock; stock > capacity; duplicate bu code; invalid location; max warehouses reached; capacity exceeded |
 | **ReplaceWarehouseUseCaseTest** | Replace when valid (archive + create) | Null; blank bu code; no active warehouse (404); invalid location; new capacity < current stock; stock mismatch |
 | **ArchiveWarehouseUseCaseTest** | Archive by id or by business unit code; idempotent when already archived | Null ref; neither id nor code; not found by id; not found by code |
 
-### Integration tests
+### REST / integration tests (@QuarkusTest, H2 in-memory)
 
-- **WarehouseEndpointIT** (`@QuarkusIntegrationTest`): List warehouses (200), archive by id (204), list again (archived excluded).
-- **ProductEndpointTest**: Product API (as provided).
+| Test Class | Coverage | Conditions |
+|------------|----------|------------|
+| **WarehouseResourceQuarkusTest** | Warehouse REST + repository | List (200), create (201/200), get (200/404/400), archive (204/400), replace (200/400) |
+| **StoreResourceQuarkusTest** | Store REST | List, get (200/404), create (201/422), update/patch (200/422/404), delete (204/404) |
+| **ProductEndpointTest** | Product REST | List, get (200/404), create (201/422), update (200/422/404), delete (204/404) |
+| **WarehouseEndpointIT** | Full app (optional) | `@QuarkusIntegrationTest` – list, archive |
 
-## Coverage
+## Coverage (JaCoCo – 80% or above)
 
-- **Tool**: JaCoCo Maven plugin (version 0.8.11).
-- **Minimum**: 80% line coverage (BUNDLE level) on assignment code (location + warehouse use cases).
-- **Exclusions**: Generated API, beans, domain models, ports, stores, products, adapters, exception classes. Full report still generated.
-- Report path: `target/site/jacoco/index.html`.
+- **Tool:** JaCoCo Maven plugin (0.8.12).
+- **Enforcement:** 80% line coverage per **package** for:
+  - `com.fulfilment.application.monolith.location`
+  - `com.fulfilment.application.monolith.warehouses.domain.usecases`
+- **Report:** Generated for all classes at `target/site/jacoco/index.html`. CI uploads the report as an artifact.
 
 ## Best Practices Used
 
 - **Nested classes** for grouping (e.g. positive vs negative/error).
-- **@DisplayName** for readable test names.
-- **Mockito** for ports (WarehouseStore, LocationResolver) in use-case tests.
-- **Assertions**: `assertThrows` for expected exceptions, `assertDoesNotThrow` for success, `verify` for mock interactions.
+- **Mockito** for ports in use-case tests; **RestAssured** for REST tests.
+- **Assertions:** `assertThrows` for expected exceptions, status codes and body in REST tests.
+- **H2** in test for QuarkusTests (no PostgreSQL required in CI).

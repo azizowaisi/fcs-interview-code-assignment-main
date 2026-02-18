@@ -1,6 +1,18 @@
 # Assignment Compliance Summary
 
-This document maps the assignment requirements to the implementation.
+This document maps the submission requirements to the implementation.
+
+## Submission checklist
+
+| Requirement | Status |
+|-------------|--------|
+| Implement all tasks from CODE_ASSIGNMENT.md | Done (Tasks 1–3; BONUS not implemented) |
+| Document unit-testing; JUnit for positive, negative, error | Done – see TESTING.md and tests below |
+| Code coverage (JaCoCo) 80% or above | Done – enforced on assignment packages |
+| Best practices (quality, standards, exceptions, logging) | Done |
+| Case study – challenges and strategies | Done – case-study/CASE_STUDY.md |
+| Push to GitHub and share link | You push and share the repo URL |
+| CI/CD and health checks (good-to-have) | Done – .github/workflows/ci.yml, /q/health |
 
 ## Code assignment tasks (CODE_ASSIGNMENT.md)
 
@@ -19,15 +31,15 @@ Validations implemented: business unit code uniqueness, location validity, max w
 - **CreateWarehouseUseCaseTest:** 1 positive, 11 negative/error (null, blank, duplicate code, invalid location, capacity/stock, max warehouses, capacity exceeded).
 - **ReplaceWarehouseUseCaseTest:** 1 positive, 6 negative/error (not found, invalid location, capacity, stock mismatch).
 - **ArchiveWarehouseUseCaseTest:** positive (by id, by code, idempotent), negative (null, no id/code, not found).
+- **REST (QuarkusTest):** WarehouseResourceQuarkusTest, StoreResourceQuarkusTest, ProductEndpointTest – HTTP status and body assertions for success and error (400, 404, 422).
 
 See [TESTING.md](TESTING.md) for structure and how to run tests.
 
 ## Code coverage (JaCoCo – 80% or above)
 
-- **Tool:** JaCoCo Maven plugin.
-- **Minimum:** 80% line coverage enforced on assignment code (location + warehouse use cases).
-- **Exclusions:** Generated API, beans, DTOs, ports (interfaces), stores, products, adapters, exception DTOs. Report still includes all code; the check applies to the in-scope classes.
-- **Report:** `./mvnw test` → `target/site/jacoco/index.html`.
+- **Tool:** JaCoCo Maven plugin (0.8.12).
+- **Enforcement:** Two PACKAGE-level rules – 80% line coverage each for `location` and `warehouses.domain.usecases`. Build fails if either package is below 80%.
+- **Report:** Full report for all classes at `target/site/jacoco/index.html`; CI uploads it as an artifact.
 
 ## Best practices
 

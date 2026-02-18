@@ -10,6 +10,7 @@ import com.fulfilment.application.monolith.warehouses.domain.ports.ReplaceWareho
 import com.warehouse.api.WarehouseResource;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
@@ -32,6 +33,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
   }
 
   @Override
+  @Transactional
   public com.warehouse.api.beans.Warehouse createANewWarehouseUnit(
       @NotNull com.warehouse.api.beans.Warehouse data) {
     if (data == null) {
@@ -66,6 +68,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
   }
 
   @Override
+  @Transactional
   public void archiveAWarehouseUnitByID(String id) {
     if (id == null || id.isBlank()) {
       throw new WebApplicationException(
@@ -88,6 +91,7 @@ public class WarehouseResourceImpl implements WarehouseResource {
   }
 
   @Override
+  @Transactional
   public com.warehouse.api.beans.Warehouse replaceTheCurrentActiveWarehouse(
       String businessUnitCode, @NotNull com.warehouse.api.beans.Warehouse data) {
     if (businessUnitCode == null || businessUnitCode.isBlank()) {
