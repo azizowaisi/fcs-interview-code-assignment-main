@@ -36,8 +36,8 @@ open target/site/jacoco/index.html   # or open the file in browser
 ## Coverage
 
 - **Tool**: JaCoCo Maven plugin (version 0.8.11).
-- **Minimum**: 80% line coverage (BUNDLE level).
-- **Exclusions**: `com.warehouse.api.**`, `**/beans/**`, `**/domain/models/**`.
+- **Minimum**: 80% line coverage (BUNDLE level) on assignment code (location + warehouse use cases).
+- **Exclusions**: Generated API, beans, domain models, ports, stores, products, adapters, exception classes. Full report still generated.
 - Report path: `target/site/jacoco/index.html`.
 
 ## Best Practices Used
